@@ -8,28 +8,49 @@ class JsConvertNode(Node):
         super().__init__('js_convert_node')
         # 订阅手柄指令
         self.subscription = self.create_subscription(Joy, 'joy', self.joy_callback, 10)
-
+        
         # 发布速度指令
         self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
         
+        self.get_logger().info('JsConvertNode has been started.')
+        
+        self.linearx_scale = 1.0  # 线速度缩放因子
+        self.angularz_scale = 1.0  # 角速度缩放因子
+        
+        self.dead_zone = 0.1  # 死区阈值
+            
 
     def joy_callback(self, msg):
+        # 检验是否有数据
+        if not msg.axes and not msg.buttons:
+            self.get_logger().warn('Received Joy message with no data')
+            return
+
+        # debug发出来具体接收到什么的信息
+        # self.get_logger().debug(f'Received Joy details: axes={msg.axes}, buttons={msg.buttons}')
+
         twist = Twist()
-
         axes = msg.axes
-
-        if len(key_list) > 1:
-            twist.linear.x = key_list[1] * 0.5
+        if len(axes) > 1:
+            if abs(axes[1]) < self.dead_zone:
+                twist.linear.x = 0.0
+            else:
+                twist.linear.x = axes[1] * self.linearx_scale 
         else:
             twist.linear.x = 0.0
 
-        if len(key_list) > 3:
-            twist.angular.z = key_list[3] * 1.0
+        if len(axes) > 3:
+            if abs(axes[3]) < self.dead_zone:
+                twist.angular.z = 0.0
+            else:
+                twist.angular.z = axes[3] * self.angularz_scale
         else:
             twist.angular.z = 0.0
+            
         self.publisher_.publish(twist)
-        
-        self.get_logger().info(f'Published cmd_vel: linear.x={twist.linear.x}, angular.z={twist.angular.z}') 
+       
+        # Debug 输出发布的 cmd_vel 细节 
+        # self.get_logger().debug(f'Published cmd_vel: linear.x={twist.linear.x}, angular.z={twist.angular.z}') 
 
 def main(args=None):
     rclpy.init(args=args)

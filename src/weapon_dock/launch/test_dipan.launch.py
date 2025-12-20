@@ -14,42 +14,46 @@ def generate_launch_description():
     serial_config_path = PathJoinSubstitution(
         [auto_serial_bridge_pkg, 'config', 'serial_data.yaml'])
 
-    # js_convert_node = Node(
-    #     package='weapon_dock',
-    #     executable='js_convert_node',
-    #     name='js_convert_node',
-    #     output='screen',
-    # )
+    js_convert_node = Node(
+        package='weapon_dock',
+        executable='js_convert_node',
+        name='js_convert_node',
+        output='screen',
+        # arguments=['--ros-args', '--log-level', 'debug']
+    )
     
     container = ComposableNodeContainer(
-            name='serial_pkg_container',
-            namespace= '',
-            package='rclcpp_components',
-            executable='component_container', 
-            arguments=['--ros-args', '--log-level', 'debug'],
-            composable_node_descriptions=[
-                ComposableNode(
-                    package="auto_serial_bridge",
-                    plugin='auto_serial_bridge::SerialController',
-                    name='serial_controller',
-                    parameters=[serial_config_path],
-                    extra_arguments=[{'use_intra_process_comms': True}]
-                ),
-                # 你可以在这里继续添加其他组件，让它们跑在同一个进程里
+                name='serial_pkg_container',
+                namespace= '',
+                package='rclcpp_components',
+                executable='component_container', 
+
+
+                arguments=['--ros-args', '--log-level', 'serial_controller:=debug'],
                 
-                # ComposableNode(
-                #     package='joy',
-                #     plugin='joy::Joy',
-                #     name='joy_node'
-                # ),
-            ],
-            output='screen',
-        ) 
-    
+                composable_node_descriptions=[
+                    ComposableNode(
+                        package="auto_serial_bridge",
+                        plugin='auto_serial_bridge::SerialController',
+                        name='serial_controller', # <--- 就是这个名字
+                        parameters=[serial_config_path],
+                        extra_arguments=[{'use_intra_process_comms': True}]
+                    ),
+                    
+                    ComposableNode(
+                        package='joy',
+                        plugin='joy::Joy',
+                        name='joy_node',
+                        extra_arguments=[{'use_intra_process_comms': True}]
+                    ),
+                ],
+                output='screen',
+            )
+        
 
     ld  = LaunchDescription()
     
-    # ld.add_action(js_convert_node)
+    ld.add_action(js_convert_node)
     ld.add_action(container)
     
 
