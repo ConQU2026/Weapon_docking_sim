@@ -19,7 +19,7 @@ def generate_launch_description():
         executable='js_convert_node',
         name='js_convert_node',
         output='screen',
-        # arguments=['--ros-args', '--log-level', 'debug']
+        arguments=['--ros-args', '--log-level', 'debug']
     )
     
     container = ComposableNodeContainer(

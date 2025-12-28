@@ -6,11 +6,14 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
-    ros_gz_sim_pkg = FindPackageShare('ros_gz_sim')
+    gazebo_ros_pkg = FindPackageShare('gazebo_ros')
     weapon_dock_pkg = FindPackageShare('weapon_dock')
     joy_pkg = FindPackageShare('joy')
 
-    gz_launch_path = PathJoinSubstitution([ros_gz_sim_pkg, 'launch', 'gz_sim.launch.py'])
+    # Gazebo Classic launch
+    gz_launch_path = PathJoinSubstitution([gazebo_ros_pkg, 'launch', 'gazebo.launch.py'])
+    
+    # Classic uses GAZEBO_MODEL_PATH
     world_path = PathJoinSubstitution([weapon_dock_pkg, 'resource', 'worlds', 'robocon2026_world', 'world.sdf'])
     
     xacro_file = PathJoinSubstitution([weapon_dock_pkg, 'urdf', 'robot.urdf.xacro'])
@@ -36,17 +39,23 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}]
     ))
     
-    
+
     ld.add_action(AppendEnvironmentVariable(
-        name='GZ_SIM_RESOURCE_PATH',
-        value=PathJoinSubstitution([weapon_dock_pkg])
+        name='GAZEBO_MODEL_PATH',
+        value=PathJoinSubstitution([weapon_dock_pkg, 'resource', 'worlds'])
     ))
 
+    ld.add_action(AppendEnvironmentVariable(
+        name='IGN_FUEL_CONFIG_PATH',
+        value=PathJoinSubstitution([weapon_dock_pkg, 'config', 'fuel_config.yaml'])
+    ))
+
+    # Include Gazebo Classic
     ld.add_action(IncludeLaunchDescription(
         PythonLaunchDescriptionSource(gz_launch_path),
         launch_arguments={
-            'gz_args': [world_path], 
-            'on_exit_shutdown': 'True'
+            'world': world_path,
+            'extra_gazebo_args': '--verbose'
         }.items(),
     ))
 
@@ -62,30 +71,12 @@ def generate_launch_description():
         ]
     ))
 
-    # 在 Gazebo 中生成模型 (要运行一次就退出，不需要 sim_time)
+    # Spawn robot in Gazebo Classic
     ld.add_action(Node(
-        package='ros_gz_sim',
-        executable='create',
-        arguments=['-topic', 'robot_description', '-name', 'my_robot', '-z', '0.5', '-x', '4', '-y', '4'],
+        package='gazebo_ros',
+        executable='spawn_entity.py',
+        arguments=['-topic', 'robot_description', '-entity', 'my_robot', '-z', '0.5', '-x', '4', '-y', '4'],
         output='screen'
-    ))
-
-    # 桥接节点
-    ld.add_action(Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        arguments=[
-            '/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist',
-            '/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry',
-            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
-            '/d435/image@sensor_msgs/msg/Image[gz.msgs.Image',
-            '/d435/depth_image@sensor_msgs/msg/Image[gz.msgs.Image',
-            '/d435/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo'
-        ],
-        output='screen',
-        parameters=[
-            {'use_sim_time': True} 
-        ]
     ))
 
     return ld

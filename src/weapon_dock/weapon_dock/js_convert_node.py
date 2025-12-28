@@ -14,11 +14,11 @@ class JsConvertNode(Node):
         
         self.get_logger().info('JsConvertNode has been started.')
         
-        self.linearx_scale = 1.0  # 线速度缩放因子
-        self.angularz_scale = 1.0  # 角速度缩放因子
-        
+        self.linearx_scale = 2.0  # 线速度x缩放因子
+        self.lineary_scale = 2.0 #  线性度y缩放因子
+        self.angularz_scale = 2.0  # 角速度缩放因子
         self.dead_zone = 0.1  # 死区阈值
-            
+
 
     def joy_callback(self, msg):
         # 检验是否有数据
@@ -39,6 +39,15 @@ class JsConvertNode(Node):
         else:
             twist.linear.x = 0.0
 
+
+        if len(axes) > 2:
+            if abs(axes[0]) < self.dead_zone:
+                twist.linear.y = 0.0
+            else:
+                twist.linear.y = axes[0] * self.lineary_scale
+        else:
+            twist.linear.y = 0.0
+
         if len(axes) > 3:
             if abs(axes[3]) < self.dead_zone:
                 twist.angular.z = 0.0
@@ -50,9 +59,10 @@ class JsConvertNode(Node):
         self.publisher_.publish(twist)
        
         # Debug 输出发布的 cmd_vel 细节 
-        # self.get_logger().debug(f'Published cmd_vel: linear.x={twist.linear.x}, angular.z={twist.angular.z}') 
+        self.get_logger().debug(f'Published cmd_vel: linear.x={twist.linear.x}, linear.y={twist.linear.y}angular.z={twist.angular.z}') 
 
 def main(args=None):
+
     rclpy.init(args=args)
     node = JsConvertNode()
     rclpy.spin(node)

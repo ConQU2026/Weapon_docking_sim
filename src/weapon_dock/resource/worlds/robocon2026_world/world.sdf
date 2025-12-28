@@ -1,88 +1,102 @@
-<?xml version="1.0"?>
-<sdf version="1.7">
-    <world name="robocon2026_world_scene">
-        <physics name="1ms" type="ignored">
-            <max_step_size>0.001</max_step_size>
-            <real_time_factor>1.0</real_time_factor>
-            <real_time_update_rate>1000.0</real_time_update_rate>
-        </physics>
+<sdf version='1.7'>
+  <world name='robocon2026_world_scene'>
+    <model name='ground_plane'>
+      <static>1</static>
+    </model>
+    <light name='sun_main1' type='directional'>
+      <pose>0 0 20 0 -0 0</pose>
+      <diffuse>255 255 255 1</diffuse>
+      <specular>0.3 0.3 0.3 1</specular>
+      <direction>0.5 0.1 -1</direction>
+      <cast_shadows>1</cast_shadows>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.01</constant>
+        <linear>0.001</linear>
+        <quadratic>0.00</quadratic>
+      </attenuation>
+    </light>
+    <light name='sun_main2' type='directional'>
+      <pose>0 0 20 0 -0 0</pose>
+      <diffuse>255 255 255 1</diffuse>
+      <specular>0.3 0.3 0.3 1</specular>
+      <direction>0.5 0.1 -1</direction>
+      <cast_shadows>1</cast_shadows>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.01</constant>
+        <linear>0.001</linear>
+        <quadratic>0.00</quadratic>
+      </attenuation>
+    </light>
+    <light name='sun_main3' type='directional'>
+      <pose>0 0 20 0 -0 0</pose>
+      <diffuse>255 255 255 1</diffuse>
+      <specular>0.3 0.3 0.3 1</specular>
+      <direction>0.5 0.1 -1</direction>
+      <cast_shadows>1</cast_shadows>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.01</constant>
+        <linear>0.001</linear>
+        <quadratic>0.00</quadratic>
+      </attenuation>
+    </light>
+    <light name='sun_main4' type='directional'>
+      <pose>0 0 20 0 -0 0</pose>
+      <diffuse>255 255 255 1</diffuse>
+      <specular>0.3 0.3 0.3 1</specular>
+      <direction>0.5 0.1 -1</direction>
+      <cast_shadows>1</cast_shadows>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.01</constant>
+        <linear>0.001</linear>
+        <quadratic>0.00</quadratic>
+      </attenuation>
+    </light>
+    <scene>
+      <ambient>0.2 0.2 0.2 1</ambient>
+      <background>0.4 0.4 0.4 1</background>
+      <shadows>1</shadows>
+    </scene>
+    <model name='robocon2026_field'>
+      <static>1</static>
+      <pose>0 0 0.01 0 -0 0</pose>
+      <link name='arena_link'>
+        <collision name='arena_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://robocon2026_world/meshes/robocon2026.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='arena_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://robocon2026_world/meshes/robocon2026.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+    </model>
+   
+  </world>
 
-        <plugin
-            filename="gz-sim-physics-system"
-            name="gz::sim::systems::Physics">
-        </plugin>
-        <plugin
-            filename="gz-sim-user-commands-system"
-            name="gz::sim::systems::UserCommands">
-        </plugin>
-        <plugin
-            filename="gz-sim-scene-broadcaster-system"
-            name="gz::sim::systems::SceneBroadcaster">
-        </plugin>
-
-        <plugin filename="gz-sim-sensors-system"
-            name="gz::sim::systems::Sensors">
-            <render_engine>ogre2</render_engine>
-        </plugin>
-
-
-        <light type="directional" name="sun">
-            <cast_shadows>true</cast_shadows>
-            <pose>0 0 10 0 0 0</pose>
-            <diffuse>0.8 0.8 0.8 1</diffuse>
-            <specular>0.2 0.2 0.2 1</specular>
-            <attenuation>
-                <range>1000</range>
-                <constant>0.9</constant>
-                <linear>0.01</linear>
-                <quadratic>0.001</quadratic>
-            </attenuation>
-            <direction>-0.5 0.1 -0.9</direction>
-        </light>
-
-        <include>
-            <uri>model://weapon_dock/resource/models/blue_R1_KFS</uri>
-            <pose> -2.9 0.0 1.0 0.0 0.0 0.0 </pose>
-        </include>
-
-        <include>
-            <uri>model://weapon_dock/resource/models/red_R1_KFS</uri>
-            <pose> 2.1 0.0 1.2 0.0 0.0 0.0 </pose>
-        </include>
-
-        <model name="robocon2026_field">
-            <static>true</static>
-            <pose>0 0 0 0 0 0</pose>
-            <link name="arena_link">
-                <collision name="arena_collision">
-                    <geometry>
-                        <mesh>
-                            <uri>
-                                model://weapon_dock/resource/worlds/robocon2026_world/meshes/robocon2026.glb</uri>
-                            <scale>1 1 1</scale>
-                        </mesh>
-                    </geometry>
-
-                    <surface>
-                        <friction>
-                            <ode>
-                                <mu>1.0</mu>
-                                <mu2>1.0</mu2>
-                            </ode>
-                        </friction>
-                    </surface>
-                </collision>
-                <visual name="arena_visual">
-                    <geometry>
-                        <mesh>
-                            <uri>
-                                model://weapon_dock/resource/worlds/robocon2026_world/meshes/robocon2026.glb</uri>
-                            <scale>1 1 1</scale>
-                        </mesh>
-                    </geometry>
-
-                </visual>
-            </link>
-        </model>
-    </world>
 </sdf>

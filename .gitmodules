@@ -1,0 +1,3 @@
+[submodule "src/FAST_LIO_ROS2"]
+	path = src/FAST_LIO_ROS2
+	url = https://github.com/liangheming/FASTLIO2_ROS2
