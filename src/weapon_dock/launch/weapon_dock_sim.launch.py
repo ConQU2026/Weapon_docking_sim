@@ -5,19 +5,21 @@ from launch.substitutions import PathJoinSubstitution, Command, LaunchConfigurat
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
+
 def generate_launch_description():
     gazebo_ros_pkg = FindPackageShare('gazebo_ros')
     weapon_dock_pkg = FindPackageShare('weapon_dock')
     r2_pkg = FindPackageShare('r2_description')
-
+    fast_lio_pkg = FindPackageShare('fast_lio')
     gz_launch_path = PathJoinSubstitution([gazebo_ros_pkg, 'launch', 'gazebo.launch.py'])
     
-    world_path = PathJoinSubstitution([weapon_dock_pkg, 'resource', 'worlds', 'robocon2026_world', 'world.sdf'])
     
+    world_path = PathJoinSubstitution([weapon_dock_pkg, 'resource', 'worlds', 'robocon2026_world', 'world.sdf'])
+    rviz_config_path = PathJoinSubstitution([weapon_dock_pkg, 'rviz', 'fastlio.rviz'])
     xacro_file = PathJoinSubstitution([r2_pkg, 'urdf', 'R2.xacro'])
     robot_description = Command(['xacro ', xacro_file])
+    fast_lio_launch_path = PathJoinSubstitution([fast_lio_pkg, 'launch', 'mapping.launch.py'])
     
-
     ld = LaunchDescription()
 
     joy_node = Node(
@@ -27,6 +29,7 @@ def generate_launch_description():
         output='screen',
         parameters=[{'use_sim_time': True}]
     )
+
 
     js_convert_node  = Node(
         package='weapon_dock',
@@ -69,8 +72,21 @@ def generate_launch_description():
         output='screen'
     )
 
-    ld.add_action(joy_node)
-    ld.add_action(js_convert_node)
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
+        arguments=['-d', rviz_config_path]
+    )
+
+    fast_lio_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(fast_lio_launch_path),
+        launch_arguments={
+            'use_sim_time': 'true'
+        }.items(),
+    )
+
 
     ld.add_action(AppendEnvironmentVariable(
         name='GAZEBO_MODEL_PATH',
@@ -86,8 +102,12 @@ def generate_launch_description():
         }.items(),
     ))
 
+    ld.add_action(joy_node)
+    ld.add_action(js_convert_node)
     ld.add_action(robot_state_publisher_node)
     ld.add_action(joint_state_publisher_node)
     ld.add_action(urdf_spawn_node)
+    ld.add_action(rviz_node)
+    # ld.add_action(fast_lio_launch)
 
     return ld

@@ -1,67 +1,60 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Twist
 
 class JsConvertNode(Node):
     def __init__(self):
         super().__init__('js_convert_node')
-        # 订阅手柄指令
-        self.subscription = self.create_subscription(Joy, 'joy', self.joy_callback, 10)
         
-        # 发布速度指令
+        # 对于实时控制，使用 "Best Effort" (尽力而为) 模式
+        # 这意味着如果网络不好，直接丢掉旧数据，而不是重发导致延迟堆积
+        qos_profile = QoSProfile(
+            reliability=ReliabilityPolicy.BEST_EFFORT,
+            history=HistoryPolicy.KEEP_LAST,
+            depth=1
+        )
+
+        self.subscription = self.create_subscription(
+            Joy, 
+            'joy', 
+            self.joy_callback, 
+            qos_profile
+        )
+        
         self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
         
-        self.get_logger().info('JsConvertNode has been started.')
+        self.get_logger().info('JsConvertNode (Low Latency Mode) has been started.')
         
-        self.linearx_scale = 2.0  # 线速度x缩放因子
-        self.lineary_scale = 2.0 #  线性度y缩放因子
-        self.angularz_scale = 2.0  # 角速度缩放因子
-        self.dead_zone = 0.1  # 死区阈值
-
+        self.linearx_scale = 2.0  
+        self.lineary_scale = 2.0 
+        self.angularz_scale = 4.0 
+        self.dead_zone = 0.1  
 
     def joy_callback(self, msg):
-        # 检验是否有数据
         if not msg.axes and not msg.buttons:
-            self.get_logger().warn('Received Joy message with no data')
             return
-
-        # debug发出来具体接收到什么的信息
-        # self.get_logger().debug(f'Received Joy details: axes={msg.axes}, buttons={msg.buttons}')
 
         twist = Twist()
         axes = msg.axes
+
+
         if len(axes) > 1:
-            if abs(axes[1]) < self.dead_zone:
-                twist.linear.x = 0.0
-            else:
-                twist.linear.x = axes[1] * self.linearx_scale 
-        else:
-            twist.linear.x = 0.0
-
-
-        if len(axes) > 2:
-            if abs(axes[0]) < self.dead_zone:
-                twist.linear.y = 0.0
-            else:
-                twist.linear.y = axes[0] * self.lineary_scale
-        else:
-            twist.linear.y = 0.0
+            val = axes[1]
+            twist.linear.x = 0.0 if abs(val) < self.dead_zone else val * self.linearx_scale
+        
+        if len(axes) > 0: 
+            val = axes[0]
+            twist.linear.y = 0.0 if abs(val) < self.dead_zone else val * self.lineary_scale
 
         if len(axes) > 3:
-            if abs(axes[3]) < self.dead_zone:
-                twist.angular.z = 0.0
-            else:
-                twist.angular.z = axes[3] * self.angularz_scale
-        else:
-            twist.angular.z = 0.0
-            
+            val = axes[3]
+            twist.angular.z = 0.0 if abs(val) < self.dead_zone else val * self.angularz_scale
+        
         self.publisher_.publish(twist)
-       
-        self.get_logger().debug(f'Published cmd_vel: linear.x={twist.linear.x}, linear.y={twist.linear.y}, angular.z={twist.angular.z}') 
 
 def main(args=None):
-
     rclpy.init(args=args)
     node = JsConvertNode()
     rclpy.spin(node)

@@ -38,7 +38,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         
-    ], ['resource', 'launch', 'urdf', 'config']),
+    ], ['resource', 'launch', 'urdf', 'config', 'rviz']),
     
     install_requires=['setuptools'],
     zip_safe=True,
