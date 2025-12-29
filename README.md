@@ -1,16 +1,39 @@
-# use gazebo harmonic and ros2 humble
-
-
-## environment setting
-```bash
-export GZ_SIM_RESOURCE_PATH=$GZ_SIM_RESOURCE_PATH:$(ros2 pkg prefix weapon_dock)/share
-ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p use_sim_time:=true
-```
+# 依赖安装
 
 ```bash
-rosdepc update # "sudo rosdep update --include-eol-distros" for Foxy and earlier
-rosdepc install -i --from-path src --rosdistro $ROS_DISTRO --skip-keys=librealsense2 -y
+sudo apt update && sudo apt install -y \
+  ros-humble-gazebo-ros \
+  ros-humble-gazebo-ros-pkgs \
+  ros-humble-gazebo-dev \
+  ros-humble-gazebo-plugins \
+  ros-humble-gazebo-msgs \
+  ros-humble-xacro \
+  ros-humble-robot-state-publisher \
+  ros-humble-joint-state-publisher \
+  ros-humble-joint-state-publisher-gui \
+  ros-humble-ros2-control \
+  ros-humble-ros2-controllers \
+  ros-humble-controller-manager \
+  libgoogle-glog-dev \
+  libpcl-dev \
+  ros-humble-pcl-ros \
+  ros-humble-pcl-conversions \
+  libeigen3-dev \
 ```
 
-![image](./.assets/field_sim.png)
-嘻嘻
+
+# 运行仿真
+先colcon build然后source balabal的
+And then
+
+```bash
+ros2 launch weapon_dock test_chassis_sim.launch.py
+```
+
+
+
+## 其他的包的安装路径
+```bash
+git clone git@github.com:ConQU2026/auto_serial_bridge.git
+git clone git@github.com:stm32f303ret6/livox_laser_simulation_RO2.git
+```
