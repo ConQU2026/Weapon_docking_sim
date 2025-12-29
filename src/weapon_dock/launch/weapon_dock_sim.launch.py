@@ -21,7 +21,6 @@ def generate_launch_description():
     fast_lio_launch_path = PathJoinSubstitution([fast_lio_pkg, 'launch', 'mapping.launch.py'])
     
     ld = LaunchDescription()
-
     joy_node = Node(
         package='joy',
         executable='joy_node',
@@ -80,6 +79,14 @@ def generate_launch_description():
         arguments=['-d', rviz_config_path]
     )
 
+    static_tf = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='static_transform_publisher',
+        arguments=['-0.32015', '0.30715', '-0.151', '0', '0', '0', 'body', 'base_link'],
+        output='screen'
+    )
+
     fast_lio_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(fast_lio_launch_path),
         launch_arguments={
@@ -108,6 +115,7 @@ def generate_launch_description():
     ld.add_action(joint_state_publisher_node)
     ld.add_action(urdf_spawn_node)
     ld.add_action(rviz_node)
-    # ld.add_action(fast_lio_launch)
+    ld.add_action(fast_lio_launch)
+    ld.add_action(static_tf)
 
     return ld

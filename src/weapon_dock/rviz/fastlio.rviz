@@ -5,7 +5,8 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /Status1
+        - /TF1/Frames1
+        - /CloudRegistered1
         - /CloudEffected1
         - /CloudMap1
       Splitter Ratio: 0.5
@@ -62,63 +63,23 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        base_link:
-          camera_link:
-            {}
-          mid360_1:
-            livox:
-              {}
-          wheel_1_1:
-            {}
-          wheel_2_1:
-            {}
-          wheel_3_1:
-            {}
-          wheel_4_1:
-            {}
         camera_init:
           body:
-            {}
+            base_link:
+              camera_link:
+                {}
+              mid360_1:
+                livox:
+                  {}
+              wheel_1_1:
+                {}
+              wheel_2_1:
+                {}
+              wheel_3_1:
+                {}
+              wheel_4_1:
+                {}
       Update Interval: 0
-      Value: true
-    - Angle Tolerance: 0.10000000149011612
-      Class: rviz_default_plugins/Odometry
-      Covariance:
-        Orientation:
-          Alpha: 0.5
-          Color: 255; 255; 127
-          Color Style: Unique
-          Frame: Local
-          Offset: 1
-          Scale: 1
-          Value: true
-        Position:
-          Alpha: 0.30000001192092896
-          Color: 204; 51; 204
-          Scale: 1
-          Value: true
-        Value: true
-      Enabled: true
-      Keep: 100
-      Name: Odometry
-      Position Tolerance: 0.10000000149011612
-      Shape:
-        Alpha: 1
-        Axes Length: 1
-        Axes Radius: 0.10000000149011612
-        Color: 255; 25; 0
-        Head Length: 0.30000001192092896
-        Head Radius: 0.10000000149011612
-        Shaft Length: 1
-        Shaft Radius: 0.05000000074505806
-        Value: Arrow
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /Odometry
       Value: true
     - Alpha: 1
       Buffer Length: 1
@@ -151,8 +112,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 2.220400333404541
-        Min Value: -0.18448109924793243
+        Max Value: 2.154594659805298
+        Min Value: -0.21972604095935822
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -169,9 +130,9 @@ Visualization Manager:
       Name: CloudRegistered
       Position Transformer: XYZ
       Selectable: true
-      Size (Pixels): 3
+      Size (Pixels): 1
       Size (m): 0.05000000074505806
-      Style: Flat Squares
+      Style: Points
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -203,9 +164,9 @@ Visualization Manager:
       Name: CloudEffected
       Position Transformer: XYZ
       Selectable: true
-      Size (Pixels): 3
+      Size (Pixels): 1
       Size (m): 0.10000000149011612
-      Style: Flat Squares
+      Style: Points
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -228,7 +189,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: AxisColor
       Decay Time: 0
-      Enabled: false
+      Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 255
@@ -237,9 +198,9 @@ Visualization Manager:
       Name: CloudMap
       Position Transformer: XYZ
       Selectable: true
-      Size (Pixels): 3
+      Size (Pixels): 1
       Size (m): 0.05000000074505806
-      Style: Flat Squares
+      Style: Points
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -249,7 +210,7 @@ Visualization Manager:
         Value: /Laser_map
       Use Fixed Frame: true
       Use rainbow: true
-      Value: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 0; 0; 0
@@ -296,7 +257,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 8.871699333190918
+      Distance: 5.553626537322998
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -311,10 +272,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.0247970819473267
+      Pitch: 0.5097975730895996
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 0.4085405766963959
+      Yaw: 1.0935394763946533
     Saved: ~
 Window Geometry:
   Displays:

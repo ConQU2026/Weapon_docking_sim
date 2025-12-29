@@ -134,7 +134,7 @@
 </link>
 
 <xacro:mid360 name="livox" parent="mid360_1" topic="/livox/lidar">
-    <origin xyz="0 0 0.025" rpy="0 0 0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
 </xacro:mid360>
 
 <link name="camera_link">
@@ -160,7 +160,7 @@
 <joint name="camera_joint" type="fixed">
   <parent link="base_link" />
   <child link="camera_link" />
-  <origin xyz="0.90 0 0.60" rpy="0 1.5708 0" />
+  <origin xyz="0.5 0 0.50" rpy="0 1.5708 0" />
 </joint>
 
 <joint name="spin_1" type="continuous">
